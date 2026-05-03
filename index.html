@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glam AI Image Prompt Generator</title>
+  <style>
+    :root{
+      --bg:#080818; --card:#121229; --card2:#191936; --text:#fff7ff; --muted:#c9c3e8;
+      --pink:#ff4fd8; --blue:#5ee7ff; --gold:#ffd166; --purple:#8b5cf6; --line:rgba(255,255,255,.14);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top left,#42106b 0,#080818 36%,#050510 100%);color:var(--text);min-height:100vh;padding:26px}
+    .wrap{max-width:1180px;margin:auto}
+    header{text-align:center;padding:28px 18px 18px}
+    h1{font-size:clamp(2rem,5vw,4.7rem);line-height:.95;margin:0;background:linear-gradient(90deg,var(--gold),var(--pink),var(--blue));-webkit-background-clip:text;color:transparent;text-shadow:0 0 28px rgba(255,79,216,.18)}
+    .tag{font-size:clamp(1rem,2vw,1.4rem);margin:16px auto 0;color:#fff;max-width:900px;font-weight:800}
+    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;margin-top:20px}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}body{padding:14px}}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.36), inset 0 0 30px rgba(255,255,255,.025)}
+    .section-title{font-size:1.08rem;margin:0 0 14px;color:var(--gold);font-weight:900;letter-spacing:.3px}
+    .controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    @media(max-width:650px){.controls{grid-template-columns:1fr}}
+    label{display:block;font-size:.87rem;color:var(--muted);font-weight:800;margin:0 0 7px}
+    select,input,textarea{width:100%;background:#070714;color:var(--text);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:12px 12px;font-size:.95rem;outline:none;box-shadow:0 0 0 0 rgba(94,231,255,0);transition:.2s}
+    select:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(94,231,255,.12)}
+    textarea{min-height:170px;resize:vertical;line-height:1.45}
+    .full{grid-column:1/-1}.mini{font-size:.78rem;color:#bcb6da;margin-top:6px}.hide{display:none!important}
+    .btns{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}
+    @media(max-width:750px){.btns{grid-template-columns:repeat(2,1fr)}.btns button:last-child{grid-column:1/-1}}
+    button{border:0;border-radius:16px;padding:13px 12px;font-weight:950;color:#080818;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--pink));box-shadow:0 10px 26px rgba(255,79,216,.25);transition:.18s}
+    button:hover{transform:translateY(-1px);filter:saturate(1.15)}
+    button.secondary{background:linear-gradient(135deg,var(--blue),#b7f7ff)}
+    button.dark{background:linear-gradient(135deg,#fff,#cfc8ff)}
+    #output{white-space:pre-wrap;background:#05050d;border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:18px;min-height:310px;line-height:1.55;color:#fff;box-shadow:inset 0 0 32px rgba(94,231,255,.04)}
+    .saved-item{background:#070714;border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px;margin:10px 0;color:#eee;cursor:pointer;line-height:1.35}.saved-item:hover{border-color:var(--pink)}
+    footer{text-align:center;color:#bfb8db;font-size:.85rem;margin:22px 0 4px}.note{color:#cfc8ff;font-size:.9rem;line-height:1.45;margin:0 0 14px}.pill{display:inline-block;border:1px solid rgba(255,255,255,.18);padding:7px 10px;border-radius:999px;margin:5px;background:rgba(255,255,255,.05);font-size:.82rem;color:#f5eaff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Glam AI Image Prompt Generator</h1>
+      <div class="tag">✨Scroll-Stopping Content • Premium Images • Because We’re Not Here to Look Broke ✨</div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2 class="section-title">1. Quick Setup</h2>
+        <p class="note">Pick a few options, generate, copy, and go create the image. No chaos buffet.</p>
+        <div class="controls">
+          <div>
+            <label>Image Type</label>
+            <select id="imageType">
+              <option value="no character">Product / Object Only</option>
+              <option value="with character" selected>With Person / Character</option>
+            </select>
+          </div>
+          <div>
+            <label>Use Reference Image Style?</label>
+            <select id="referenceStyle">
+              <option value="No reference image used">No</option>
+              <option value="Use uploaded reference image to match the style, lighting, mood, composition energy, color feel, and overall visual look without explaining the analysis" selected>Yes</option>
+            </select>
+          </div>
+          <div class="full">
+            <label>Upload Reference Image</label>
+            <input id="refUpload" type="file" accept="image/*" />
+            <div class="mini">The prompt will include a clean reference-style instruction. It won’t analyze out loud.</div>
+          </div>
+        </div>
+
+        <h2 class="section-title" style="margin-top:22px">2. Core Controls</h2>
+        <div class="controls">
+          <div><label>Art Style</label><select id="artStyle"></select><input id="artCustom" placeholder="Custom art style..." /></div>
+          <div><label>Scene / Background</label><select id="scene"></select><input id="sceneCustom" placeholder="Custom scene..." /></div>
+          <div><label>Lighting</label><select id="lighting"></select><input id="lightingCustom" placeholder="Custom lighting..." /></div>
+          <div><label>Mood</label><select id="mood"></select><input id="moodCustom" placeholder="Custom mood..." /></div>
+          <div><label>Colors</label><select id="colors"></select><input id="colorsCustom" placeholder="Custom colors..." /></div>
+          <div><label>Camera Angle</label><select id="camera"></select><input id="cameraCustom" placeholder="Custom angle..." /></div>
+          <div><label>Time of Day</label><select id="time"></select><input id="timeCustom" placeholder="Custom time..." /></div>
+          <div><label>Giant Crazy Product / Platform</label><select id="product"></select><input id="productCustom" placeholder="Custom giant product..." /></div>
+          <div class="full"><label>Custom Text on Image</label><input id="posterText" placeholder='Example: "She Built Her Own Damn Stage"' /></div>
+        </div>
+
+        <div id="characterBox">
+          <h2 class="section-title" style="margin-top:22px">3. Character Controls</h2>
+          <div class="controls">
+            <div><label>Gender</label><select id="gender"><option>Female</option><option>Male</option></select></div>
+            <div><label>Ethnicity</label><select id="ethnicity"></select><input id="ethnicityCustom" placeholder="Custom ethnicity..." /></div>
+            <div><label>Skin Tone</label><select id="skin"></select><input id="skinCustom" placeholder="Custom skin tone..." /></div>
+            <div><label>Body Type</label><select id="body"></select><input id="bodyCustom" placeholder="Custom body type..." /></div>
+            <div><label>Hair</label><select id="hair"></select><input id="hairCustom" placeholder="Custom hair..." /></div>
+            <div><label>Outfit</label><select id="outfit"></select><input id="outfitCustom" placeholder="Custom outfit..." /></div>
+            <div><label>Shoes</label><select id="shoes"></select><input id="shoesCustom" placeholder="Custom shoes..." /></div>
+            <div><label>Makeup</label><select id="makeup"></select><input id="makeupCustom" placeholder="Custom makeup..." /></div>
+            <div><label>Nails</label><select id="nails"></select><input id="nailsCustom" placeholder="Custom nails..." /></div>
+            <div><label>Pose</label><select id="pose"></select><input id="poseCustom" placeholder="Custom pose..." /></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Prompt Output</h2>
+        <div class="btns">
+          <button onclick="generatePrompt()">Generate</button>
+          <button class="secondary" onclick="copyPrompt()">Copy</button>
+          <button class="dark" onclick="clearAll()">Clear</button>
+          <button class="secondary" onclick="randomize()">Random</button>
+          <button onclick="savePrompt()">Save</button>
+        </div>
+        <div id="output">Your prompt will show here.</div>
+        <h2 class="section-title" style="margin-top:22px">Saved Prompts</h2>
+        <div id="savedList"></div>
+      </section>
+    </div>
+    <footer>all rights reserved by glamorousgrammyglowup</footer>
+  </div>
+
+<script>
+const data = {
+  artStyle:['Realistic cinematic editorial','Luxury product ad','Surreal fashion campaign','Giant city-scale fantasy realism','Glossy beauty commercial','High-fashion magazine cover','Dreamy perfume ad','Bold social media poster','Hyper-realistic 3D ad','Luxury billboard fantasy'],
+  scene:['Pink luxury studio','Blue skincare product world','Rooftop city at night','Ocean swing scene','Snowy mountain fantasy','Giant billboard city corner','Neon Tokyo street','Glass perfume bottle room','Floating cloud platform','Luxury mall atrium'],
+  lighting:['Soft glam studio glow','Cinematic rim lighting','Golden hour glow','Neon city glow','Flashbulb paparazzi lighting','Dreamy pastel glow','Moody storm lighting','Clean bright product lighting','Sparkle lens flares','Glossy reflective lighting'],
+  mood:['Powerful and glamorous','Soft and feminine','Boss luxury energy','Dreamy and expensive','Bold and dramatic','Playful viral ad energy','Mysterious night glam','Clean premium skincare vibe','Faith-filled confidence','High-end campaign mood'],
+  colors:['Hot pink, chrome silver, and blush','Sky blue, white, and glossy aqua','Black, purple, and neon magenta','Gold, ivory, and champagne','Red, black, and diamond white','Pastel pink, pearl, and cream','Royal blue, gold, and black','Emerald, lime, and smoky gray','Lavender, silver, and midnight blue','Custom brand colors'],
+  camera:['Full body head-to-toe','Low-angle giant perspective','Wide cinematic shot','Editorial close-up','Bird’s-eye city view','Hero product angle','Magazine cover framing','Centered product ad composition','Dramatic forced perspective','4:5 Pinterest-ready crop'],
+  time:['Golden hour','Night city','Bright daytime','Blue hour','Sunrise','Stormy evening','Snowy twilight','Studio timeless','Midnight neon','Soft cloudy afternoon'],
+  product:['Giant perfume bottle room','Oversized skincare jar staircase','Luxury cream jar swing','Giant diamond lipstick tower','Huge pink glass bottle floating on ice water','Phone platform over snowy mountains','Pearl swing from city billboard','Rooftop boot box skyscraper','Giant mascara wand bridge','Crystal compact mirror throne','Giant high heel product stage','Oversized lip gloss yacht','Giant makeup brush runway','Floating designer shopping bag platform','Huge sunscreen bottle under holiday billboard'],
+  ethnicity:['Not specified','African American','Black','White','Latina','Asian','Middle Eastern','Native American','Pacific Islander','Mixed ethnicity','South Asian'],
+  skin:['Not specified','Deep brown','Rich mocha','Medium tan','Golden brown','Fair','Porcelain','Olive','Caramel','Ebony','Warm beige'],
+  body:['Not specified','Slim','Curvy','Plus-size','Athletic','Tall','Petite','Average','Muscular','Soft glam body type','Model-like proportions'],
+  hair:['Not specified','Long flowing waves','Purple high ponytail','Wet tousled hair','Blonde bob','Natural afro curls','Sleek black bob','Copper red waves','Braided crown','Silver moonlit waves','Big voluminous curls'],
+  outfit:['Not specified','Sparkly fitted gown','White blouse and blue trousers','Black blazer and cream pants','Purple crop set','Gold ruffle skirt and bikini top','Leopard bodysuit with boots','Turquoise mini dress','Royal purple gown','Black leather outfit with fur coat','Colorful floating floral dress'],
+  shoes:['Not specified','Diamond heels','Platform heels','Pointed black boots','White strappy heels','Blue heeled pumps','Barefoot fantasy look','Chrome stilettos','Gold sandals','Luxury knee-high boots','Pink satin heels'],
+  makeup:['Not specified','Soft glam makeup','Bold purple eyeshadow','Glossy nude lips','Pink editorial glam','Gold shimmer glam','Dark smoky eye','Clean skincare glow','Red carpet glam','Dewy beauty ad makeup'],
+  nails:['Not specified','Long purple nails','Black glossy nails','Chrome silver nails','Diamond accent nails','Hot pink nails','French tips','Gold glitter nails','Red luxury nails','Pearl white nails','Blue glossy nails'],
+  pose:['Full body standing confidently','Sitting on giant product','Walking across product platforms','Holding shopping bags','Leaning on product tower','Lounging on oversized object','Swinging from pearl ropes','Floating beside product skyscraper','Reaching toward camera','Stepping from one product to another']
+};
+function fill(id, arr){ const s=document.getElementById(id); s.innerHTML='<option value="">None</option>'+arr.map(x=>`<option>${x}</option>`).join(''); }
+Object.keys(data).forEach(k=>fill(k,data[k]));
+['artStyle','scene','lighting','mood','colors','camera','time','product','ethnicity','skin','body','hair','outfit','shoes','makeup','nails','pose'].forEach(id=>{ if(document.getElementById(id).options.length>1) document.getElementById(id).selectedIndex=1; });
+
+document.getElementById('imageType').addEventListener('change',()=>{characterBox.classList.toggle('hide', imageType.value==='no character')});
+function val(id){return document.getElementById(id)?.value?.trim()||''}
+function pick(id){return val(id+'Custom') || val(id)}
+function line(label,value){return value && value!=='None' ? `${label}: ${value}.` : ''}
+function generatePrompt(){
+  const hasChar = val('imageType')==='with character';
+  let parts = [];
+  parts.push('Create a high-quality, realistic, cinematic AI image poster.');
+  if(val('referenceStyle').startsWith('Use')) parts.push('Use the uploaded reference image to match the style, lighting, mood, color feel, composition energy, and overall visual look. Do not explain the reference analysis. Just apply it naturally.');
+  parts.push(line('Art style',pick('artStyle')));
+  parts.push(line('Scene / background',pick('scene')));
+  parts.push(line('Lighting',pick('lighting')));
+  parts.push(line('Mood',pick('mood')));
+  parts.push(line('Color palette',pick('colors')));
+  parts.push(line('Camera / framing',pick('camera')));
+  parts.push(line('Time of day',pick('time')));
+  parts.push(line('Giant crazy product / platform',pick('product')));
+  parts.push('Product/platform rule: make the giant product look intentional, luxurious, physically believable, and integrated into the scene with realistic shadows, scale, contact points, and reflections.');
+  if(hasChar){
+    let desc = [val('gender'), pick('ethnicity'), pick('skin'), pick('body')].filter(Boolean).join(', ');
+    parts.push(line('Main character',desc));
+    parts.push(line('Hair',pick('hair'))); parts.push(line('Outfit',pick('outfit'))); parts.push(line('Shoes',pick('shoes'))); parts.push(line('Makeup',pick('makeup'))); parts.push(line('Nails',pick('nails'))); parts.push(line('Pose/action',pick('pose')));
+    parts.push('Character framing rule: default to full body, head-to-toe, visible feet, no cut-off shoes, no cropped legs, no awkward body parts, and no half-body unless the selected framing clearly requires it.');
+  }
+  if(val('posterText')) parts.push(`Add bold readable text: "${val('posterText')}".`);
+  parts.push('Typography rule: keep all text clean, readable, correctly spelled, balanced, and not covering the face, hands, product, platform, or important scene details.');
+  parts.push('Quality rule: polished, detailed, realistic, premium, social-media-ready, visually balanced, Pinterest-worthy, scroll-stopping.');
+  parts.push('Avoid blurry details, messy text, misspelled words, extra fingers, distorted hands, warped faces, duplicate limbs, random logos, watermarks, low-resolution details, and cluttered layouts.');
+  output.textContent = parts.filter(Boolean).join('\n\n');
+}
+function copyPrompt(){navigator.clipboard.writeText(output.textContent||'');}
+function clearAll(){document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);document.querySelectorAll('input:not([type=file])').forEach(i=>i.value='');document.getElementById('refUpload').value='';output.textContent='Your prompt will show here.';imageType.value='with character';characterBox.classList.remove('hide');}
+function randomFrom(id){let s=document.getElementById(id); if(!s) return; s.selectedIndex=Math.floor(Math.random()*(s.options.length-1))+1;}
+function randomize(){['artStyle','scene','lighting','mood','colors','camera','time','product','ethnicity','skin','body','hair','outfit','shoes','makeup','nails','pose'].forEach(randomFrom); generatePrompt();}
+function savePrompt(){let p=output.textContent; if(!p || p==='Your prompt will show here.') return; let saved=JSON.parse(localStorage.getItem('glamSavedPrompts')||'[]'); saved.unshift(p); localStorage.setItem('glamSavedPrompts',JSON.stringify(saved.slice(0,20))); renderSaved();}
+function renderSaved(){let saved=JSON.parse(localStorage.getItem('glamSavedPrompts')||'[]'); savedList.innerHTML=saved.map((p,i)=>`<div class="saved-item" onclick="reusePrompt(${i})">${p.slice(0,160)}...</div>`).join('') || '<p class="mini">No saved prompts yet.</p>';}
+function reusePrompt(i){let saved=JSON.parse(localStorage.getItem('glamSavedPrompts')||'[]'); output.textContent=saved[i]||'';}
+renderSaved(); generatePrompt();
+</script>
+</body>
+</html>
